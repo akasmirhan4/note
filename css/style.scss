@@ -1,14 +1,169 @@
-.filename{
-  outline: none;
-  border:none;
+@keyframes shake {
+  5%, 50% {
+    transform: translate3d(-1px, 0, 0);
+  }
+  
+  10%, 45% {
+    transform: translate3d(2px, 0, 0);
+  }
+
+  15%, 25%, 35% {
+    transform: translate3d(-2px, 0, 0);
+  }
+
+  20%, 30% {
+    transform: translate3d(2px, 0, 0);
+  }
+  50%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
 }
-.filename::placeholder{
+
+.shake{
+  animation: shake 2s cubic-bezier(.36,.07,.19,.97) both;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+  animation-iteration-count: infinite;
+  animation-delay: 1s;
+}
+
+html{
+  overflow: scroll;
+}
+
+body {
+  background: #fafafa;
+  user-select: none;
+  height: 100vh;
+  overflow: scroll;
+}
+header {
+  background: white;
+}
+.filename {
+  outline: none;
+  border: none;
+  margin-right: 1em;
+}
+.filename:hover {
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+}
+.filename::placeholder {
   font-style: italic;
 }
 
-main {
-  height: 70vh;
+.left-margin,
+.right-margin {
+  cursor: w-resize;
+  position: absolute;
+  top: 0px;
+}
+.left-margin {
+  left: 0px;
+}
+.right-margin {
+  right: 0px;
+}
+
+.top-margin,
+.bottom-margin {
+  cursor: n-resize;
+  position: absolute;
+  right: 0px;
+}
+.top-margin {
+  top: 0px;
+}
+.bottom-margin {
+  bottom: 0px;
+}
+
+.ruler.horizontal {
+  cursor: pointer;
+  height: 1.2em;
+  position: absolute;
+  width: 100%;
+  z-index: 3;
+}
+.ruler.vertical {
+  cursor: pointer;
+  width: 1.2em;
+  position: absolute;
+  height: 100%;
+  z-index: 2;
+}
+
+.ruler.horizontal .inner {
+  position: absolute;
+  height: 100%;
+  border-left:1px solid rgba(0, 0, 0, 0.1);
+  border-right:1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ruler.vertical .inner {
+  position: absolute;
+  width: 100%;
+  border-top:1px solid rgba(0, 0, 0, 0.1);
+  border-bottom:1px solid rgba(0, 0, 0, 0.1);
+}
+
+.left-margin {
+  transform: translateX(-50%);
+}
+
+.right-margin {
+  transform: translateX(50%);
+}
+
+.top-margin {
+  transform: translateY(-50%);
+}
+
+.bottom-margin{
+  transform: translateY(50%);
+}
+
+// .vertical-line {
+//   display: none;
+//   top: 0px;
+//   border-left: 1px dashed black;
+//   height: 80vh;
+//   width: 100%;
+//   position:absolute;
+// }
+
+// .horizontal-line {
+//   display: none;
+//   left: 0px;
+//   border-top: 1px dashed black;
+//   width: 80vw;
+//   height: 100%;
+//   position:absolute;
+// }
+
+
+.document-width-text {
+  display: none;
+  font-size: 0.6rem;
   pointer-events: none;
+}
+
+.document-height-text {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: none;
+  font-size: 0.6rem;
+  pointer-events: none;
+  writing-mode: vertical-lr;
+  transform: rotate(-180deg);
+}
+
+main {
+  position: relative;
+  height: 2000px;
+  width: 2000px;
 }
 button:focus,
 button:active {
@@ -16,17 +171,18 @@ button:active {
 }
 
 .text-area {
+  overflow: scroll;
   pointer-events: auto;
   border-radius: 10px;
-  margin-top: 2em;
   padding: 1em;
-  height: 100%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: block;
-  background: unset !important;
+  background: white !important;
+  user-select: auto;
+  position: absolute;
 }
 
-.text-area :only-child:focus{
+.text-area :only-child:focus {
   outline: "#e1e1e1 dashed 2px";
 }
 
@@ -51,7 +207,8 @@ select {
   cursor: pointer;
 }
 
-input[type="color"],input[type="file"] {
+input[type="color"],
+input[type="file"] {
   cursor: pointer;
   position: absolute;
   left: 0;

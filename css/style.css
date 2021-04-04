@@ -1,6 +1,90 @@
+@-webkit-keyframes shake {
+  5%, 50% {
+    -webkit-transform: translate3d(-1px, 0, 0);
+            transform: translate3d(-1px, 0, 0);
+  }
+  10%, 45% {
+    -webkit-transform: translate3d(2px, 0, 0);
+            transform: translate3d(2px, 0, 0);
+  }
+  15%, 25%, 35% {
+    -webkit-transform: translate3d(-2px, 0, 0);
+            transform: translate3d(-2px, 0, 0);
+  }
+  20%, 30% {
+    -webkit-transform: translate3d(2px, 0, 0);
+            transform: translate3d(2px, 0, 0);
+  }
+  50%, 100% {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes shake {
+  5%, 50% {
+    -webkit-transform: translate3d(-1px, 0, 0);
+            transform: translate3d(-1px, 0, 0);
+  }
+  10%, 45% {
+    -webkit-transform: translate3d(2px, 0, 0);
+            transform: translate3d(2px, 0, 0);
+  }
+  15%, 25%, 35% {
+    -webkit-transform: translate3d(-2px, 0, 0);
+            transform: translate3d(-2px, 0, 0);
+  }
+  20%, 30% {
+    -webkit-transform: translate3d(2px, 0, 0);
+            transform: translate3d(2px, 0, 0);
+  }
+  50%, 100% {
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0);
+  }
+}
+
+.shake {
+  -webkit-animation: shake 2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+          animation: shake 2s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  -webkit-transform: translate3d(0, 0, 0);
+          transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-perspective: 1000px;
+          perspective: 1000px;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-delay: 1s;
+          animation-delay: 1s;
+}
+
+html {
+  overflow: scroll;
+}
+
+body {
+  background: #fafafa;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  height: 100vh;
+  overflow: scroll;
+}
+
+header {
+  background: white;
+}
+
 .filename {
   outline: none;
   border: none;
+  margin-right: 1em;
+}
+
+.filename:hover {
+  outline: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .filename::-webkit-input-placeholder {
@@ -19,9 +103,110 @@
   font-style: italic;
 }
 
-main {
-  height: 70vh;
+.left-margin,
+.right-margin {
+  cursor: w-resize;
+  position: absolute;
+  top: 0px;
+}
+
+.left-margin {
+  left: 0px;
+}
+
+.right-margin {
+  right: 0px;
+}
+
+.top-margin,
+.bottom-margin {
+  cursor: n-resize;
+  position: absolute;
+  right: 0px;
+}
+
+.top-margin {
+  top: 0px;
+}
+
+.bottom-margin {
+  bottom: 0px;
+}
+
+.ruler.horizontal {
+  cursor: pointer;
+  height: 1.2em;
+  position: absolute;
+  width: 100%;
+  z-index: 3;
+}
+
+.ruler.vertical {
+  cursor: pointer;
+  width: 1.2em;
+  position: absolute;
+  height: 100%;
+  z-index: 2;
+}
+
+.ruler.horizontal .inner {
+  position: absolute;
+  height: 100%;
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.ruler.vertical .inner {
+  position: absolute;
+  width: 100%;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.left-margin {
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+}
+
+.right-margin {
+  -webkit-transform: translateX(50%);
+          transform: translateX(50%);
+}
+
+.top-margin {
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+.bottom-margin {
+  -webkit-transform: translateY(50%);
+          transform: translateY(50%);
+}
+
+.document-width-text {
+  display: none;
+  font-size: 0.6rem;
   pointer-events: none;
+}
+
+.document-height-text {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: none;
+  font-size: 0.6rem;
+  pointer-events: none;
+  -webkit-writing-mode: vertical-lr;
+      -ms-writing-mode: tb-lr;
+          writing-mode: vertical-lr;
+  -webkit-transform: rotate(-180deg);
+          transform: rotate(-180deg);
+}
+
+main {
+  position: relative;
+  height: 2000px;
+  width: 2000px;
 }
 
 button:focus,
@@ -30,15 +215,19 @@ button:active {
 }
 
 .text-area {
+  overflow: scroll;
   pointer-events: auto;
   border-radius: 10px;
-  margin-top: 2em;
   padding: 1em;
-  height: 100%;
   -webkit-box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   display: block;
-  background: unset !important;
+  background: white !important;
+  -webkit-user-select: auto;
+     -moz-user-select: auto;
+      -ms-user-select: auto;
+          user-select: auto;
+  position: absolute;
 }
 
 .text-area :only-child:focus {
@@ -68,7 +257,8 @@ select {
   cursor: pointer;
 }
 
-input[type="color"], input[type="file"] {
+input[type="color"],
+input[type="file"] {
   cursor: pointer;
   position: absolute;
   left: 0;

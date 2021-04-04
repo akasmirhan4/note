@@ -1,3 +1,23 @@
+function wordsCount() {
+    var content = $(".text-area")[0].innerText.replace(/\n/ig, ' ').replaceAll(/\s+/g, ' ').trim();
+    if (content) {
+        var count = content.split(' ').length;
+    }
+    else {
+        var count = 0;
+    }
+
+    $("#word-count").text(count);
+}
+
+function getOffset(el) {
+    const rect = el.getBoundingClientRect();
+    return {
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY
+    };
+  }
+
 function rgb2hex(rgb) {
     if (rgb == "none") {
         return "none";
