@@ -39,7 +39,10 @@ body {
   overflow: scroll;
 }
 header {
+  width: 100vw;
   background: white;
+  z-index: 5;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 .filename {
   outline: none;
@@ -162,6 +165,8 @@ header {
 
 main {
   position: relative;
+  min-height: 100vh;
+  min-width: 100vw;
   height: 2000px;
   width: 2000px;
 }
@@ -171,6 +176,7 @@ button:active {
 }
 
 .text-area {
+  font-family: Roboto;
   overflow: scroll;
   pointer-events: auto;
   border-radius: 10px;

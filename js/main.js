@@ -34,13 +34,9 @@ $(document).ready(function () {
             $('#save i').css('color', "rgba(0,0,0,0.1)");
         }
     }
-
-
-
-
 });
 
-function initNotepad(width,height) {
+function initNotepad(width, height) {
     NOTEPAD.html("");
     notepad = new Notepad(NOTEPAD, 50, 50, width, height, RULERX, RULERY);
 
@@ -64,45 +60,6 @@ function setStyle(elem, style) {
     // elem.parent("div").css({
     //     'text-align': style['text-alignment']
     // })
-}
-
-// Get style of selected text
-function getSelectionStyle() {
-    // If there are no text, return the current style
-    if (getSelection().anchorNode.id == "text-area") {
-        return getCurrentStyle();
-    } else {
-        let selectedStyle = {};
-        selectedStyle[
-            "font-size"
-        ] = getSelection().anchorNode.parentElement.style.fontSize;
-        selectedStyle[
-            "font-family"
-        ] = getSelection().anchorNode.parentElement.style.fontFamily;
-        selectedStyle["isBold"] =
-            getSelection().anchorNode.parentElement.style.fontWeight == "bold"
-                ? true
-                : false;
-        selectedStyle["isItalic"] =
-            getSelection().anchorNode.parentElement.style.fontStyle == "italic"
-                ? true
-                : false;
-        selectedStyle["isUnderline"] =
-            getSelection().anchorNode.parentElement.style.textDecoration ==
-                "underline"
-                ? true
-                : false;
-        selectedStyle["font-color"] = rgb2hex(
-            getSelection().anchorNode.parentElement.style.color
-        );
-        selectedStyle["font-highlight"] = rgb2hex(
-            getSelection().anchorNode.parentElement.style.background
-        );
-        selectedStyle[
-            "text-alignment"
-        ] = getSelection().anchorNode.parentElement.style.textAlignment;
-        return selectedStyle;
-    }
 }
 
 // Get style of current notepad format
@@ -254,29 +211,6 @@ $(".text-alignment").on("change", function () {
 
 /* --------- END STYLE CHANGE LISTENER --------- */
 
-// Check if two nodes have the same format
-function checkNodeFormat(node1, node2) {
-    if (node1["font-size"] !== node2["font-size"]) {
-        return false;
-    } else if (node1["font-family"] !== node2["font-family"]) {
-        return false;
-    } else if (node1["isBold"] !== node2["isBold"]) {
-        return false;
-    } else if (node1["isItalic"] !== node2["isItalic"]) {
-        return false;
-    } else if (node1["isUnderline"] !== node2["isUnderline"]) {
-        return false;
-    } else if (node1["font-color"] !== node2["font-color"]) {
-        return false;
-    } else if (node1["font-highlight"] !== node2["font-highlight"]) {
-        return false;
-    } else if (node1["text-alignment"] !== node2["text-alignment"]) {
-        return false;
-    } else {
-        return true;
-    }
-}
-
 function getTextChildNode(node) {
     var textNode = [];
     // Loop through all siblings
@@ -293,45 +227,42 @@ function getTextChildNode(node) {
     return textNode;
 }
 
+// Get all text nodes in text area
+function getAllTextNodes() {
+    var nodes = notepad.node.find(":not(iframe)").addBack().contents().filter(function () {
+        return this.nodeType == 3;
+    });
+    return nodes;
+}
 
 // Get all text nodes in selected text
 function getTextNodes() {
+    var allNodes = getAllTextNodes();
     var selection = getSelection();
+
+    var nodes = [];
 
     // If selection is empty
     if (selection.type == "None") {
         return null;
-    }
+    } else {
 
-    // Set start and end node
-    var currentNode = selection.extentNode;
-    var endNode = selection.anchorNode;
-    var nodes = [];
-    // Loop through nodes until reach end node
-    do {
-        if (currentNode.nodeType == 3) {
-            nodes.push(currentNode);
-        } else if (currentNode.nodeType == 1) {
-            var tempNodes = getTextChildNode(currentNode);
-            nodes = nodes.concat(tempNodes);
+        // Loop through all text nodes in text-area
+        for (var n = 0; n < allNodes.length; n++) {
+
+            //If selection contain a text node, push into the result
+            if (selection.containsNode(getAllTextNodes()[n])) {
+                nodes.push(getAllTextNodes()[n]);
+            }
         }
-        currentNode = currentNode.nextSibling;
+        return nodes;
     }
-    while (
-        currentNode !== endNode &&
-        currentNode !== null
-    )
-
-    return nodes;
 }
 
 /* --------- TEXT AREA FOCUS LISTENER --------- */
-$("html").mouseup(function (e) {
-    if (getSelection().type == "None") {
-        return null;
-    }
 
-    // check for changes in text area
+function updateTextArea() {
+    // update save button
     if (localStorage.textAreaData != notepad.node.html()) {
         $('#save i').addClass('shake');
         $('#save i').css('color', "rgb(33, 37, 41)");
@@ -339,195 +270,300 @@ $("html").mouseup(function (e) {
         $('#save i').removeClass('shake');
         $('#save i').css('color', "rgba(0,0,0,0.1)");
     }
-    setBoldState();
-    setItalicState();
-    ee();
-});
-
-$("main").mouseup(function (e) {
-    // if (targetSelection) {
-    //     targetSelection.css("outline", "none");
-    // }
-
-    // Set document to selected text format if empty
-    if ($(".text-area").text() == "") {
-        setStyle($(".text-area"), getCurrentStyle());
-    }
-
-    // Change notepad format to selected text format
-    else {
-    }
-
-    // Outline selection
-    // $(e.target).css("outline", "#e1e1e1 dashed 2px");
-    // targetSelection = $(e.target);
-});
-
-$("main").keyup(function () {
     wordsCount();
+    checkSelectionFormat();
     ee();
-    // check for changes in text area
-    if (localStorage.textAreaData != notepad.node.html()) {
-        $('#save i').addClass('shake');
-        $('#save i').css('color', "rgb(33, 37, 41)");
-    } else {
-        $('#save i').removeClass('shake');
-        $('#save i').css('color', "rgba(0,0,0,0.1)");
-    }
+
+}
+
+
+$("html").mouseup(function (e) {
+    updateTextArea();
 });
 
-// Easter Egg
-function ee() {
-    var triggerStr1 = "Rick Roll";
-    var triggerStr2 = "Ricardo";
-    var triggerStr3 = "<b>RICARDO</b>";
-    if ($(".text-area")[0].innerText.includes(triggerStr1)) {
-        window.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
-    } else if ($(".text-area")[0].innerText.includes(triggerStr2)) {
-        window.open("https://www.youtube.com/watch?v=4zBAoKtfom0");
-    } else if ($(".text-area")[0].innerHTML.includes(triggerStr3)) {
-        window.open("https://www.youtube.com/watch?v=S2brARroEcI");
-    }
-}
+$("html").keyup(function () {
+    updateTextArea();
+});
+
 
 /* ---------- START CHECK FORMAT ---------- */
 
-function checkSelectionBold() {
-    const BOLD = 700;
-    const NORMAL = 400;
+function stateCheck(style, currentState, ACTIVE, NORMAL) {
+    if (currentState != 2) {
+        if (style == ACTIVE) {
 
-    var state = -1;
+            // stop once there are text that is mixed state
+            if (currentState == 0) {
+                return 2;
+            }
+            else {
+                return 1;
+            }
+            // stop once there are text that is mixed state
+        } else if (style == NORMAL) {
+            if (currentState == 1) {
+                return 2;
+            }
+            else {
+                return 0;
+            }
+        } else {
+            console.error("style not consistent");
+            return -1;
+        }
+    }
+}
+
+function checkSelectionFormat() {
+    const BOLD_ACTIVE = 700;
+    const BOLD_NORMAL = 400;
+
+    const ITALIC_ACTIVE = "italic";
+    const ITALIC_NORMAL = "normal";
+
+    const UNDERLINE_ACTIVE = "underline";
+    const UNDERLINE_NORMAL = "none";
 
     /* 
   
       STATE:
   
-      -1 : ERRPR
-      0 : NORMAL
-      1 : BOLD
-      2 : MIXED
+      -1 : ERROR
+      0 : SINGLE
+      1 : MIXED
   
-      */
+    */
+
+    var states = {
+        'fontFamily': -1,
+        'fontSize': -1,
+        'color': -1,
+        'backgroundColor': -1,
+        'bold': -1,
+        'italic': -1,
+        'underline': -1,
+        'alignment': -1,
+    }
 
     var nodes = getTextNodes();
-    if (nodes == null) {
+    if (nodes == null || nodes.length == 0) {
         return null;
     }
 
+    var initFontFamily = $(nodes[0].parentNode).css("font-family");
+    states.fontFamily = 0;
+
+    var initFontSize = $(nodes[0].parentNode).attr('size');
+    states.fontSize = 0;
+
+    var initColor = $(nodes[0].parentNode).css("color");
+    states.color = 0;
+
+    var initBackgroundColor = $(nodes[0].parentNode).css("background-color");
+    states.backgroundColor = 0;
+
+    var initBold = $(nodes[0].parentNode).css("font-weight");
+    states.bold = 0;
+
+    var initItalic = $(nodes[0].parentNode).css("font-style");
+    states.italic = 0;
+
+    var initUnderline = $(nodes[0].parentNode).css("text-decoration-line");
+    states.underline = 0;
+
+    var initAlignment = $(nodes[0].parentNode).css("text-align");
+    states.alignment = 0;
+
+    // Check for mixed styling
     for (var i = 0; i < nodes.length; i++) {
+        //if node is #text
         if (nodes[i]["nodeType"] == 3) {
-            //3 means text element
-            var fontWeight = $(nodes[i].parentNode).css("font-weight");
-            if (fontWeight == BOLD) {
-                if (state == 0) {
-                    state = 2;
-                    return state;
-                }
-                state = 1;
-            } else if (fontWeight == NORMAL) {
-                if (state == 1) {
-                    state = 2;
-                    return state;
-                }
-                state = 0;
-            } else {
-                console.error("font weight not consistent");
-                state = -1;
-                return state;
+
+            // Check for font-family state
+            if ($(nodes[i].parentNode).css("font-family") != initFontFamily) {
+                states.fontFamily = 1;
             }
+
+            // Check for font-size state
+            if ($(nodes[i].parentNode).attr('size') != initFontSize) {
+                states.fontSize = 1;
+            }
+
+            // Check for color state
+            if ($(nodes[i].parentNode).css("color") != initColor) {
+                states.color = 1;
+            }
+
+            // Check for background-color state
+            if ($(nodes[i].parentNode).css("background-color") != initBackgroundColor) {
+                states.backgroundColor = 1;
+            }
+
+            // Check for bold state
+            if ($(nodes[i].parentNode).css("font-weight") != initBold) {
+                states.bold = 1;
+            }
+
+            // Check for italic state
+            if ($(nodes[i].parentNode).css("font-style") != initItalic) {
+                states.italic = 1;
+            }
+
+            // Check for underline state
+            if ($(nodes[i].parentNode).css("text-decoration-line") != initUnderline) {
+                states.underline = 1;
+            }
+
+            // Check for alignment state
+            if ($(nodes[i].parentNode).css("text-align") != initAlignment) {
+                states.alignment = 1;
+            }
+
+
         }
     }
 
-    return state;
-}
+    // Update notepad style options
+    if (states.fontFamily == 0) {
+        $('#font-family').val(initFontFamily);
+    }
+    else {
+        $('#font-family').val("");
+    }
 
-function setBoldState() {
-    var boldState = checkSelectionBold();
+    if (states.fontSize == 0) {
+        $('#font-size').val(initFontSize);
+    }
+    else {
+        $('#font-size').val("");
+    }
 
-    if (boldState == 0) {
-        // UNSET BUTTON
-        $("#bold").removeClass("active");
-        $("#bold").attr("aria-pressed", "false");
-        $("#bold i").css("color", "rgb(33, 37, 41)");
-    } else if (boldState == 1) {
-        // SET BUTTON
-        $("#bold").addClass("active");
-        $("#bold").attr("aria-pressed", "true");
-        $("#bold i").css("color", "rgb(33, 37, 41)");
-    } else if (boldState == 2) {
-        // UNSET BUTTON
+    if (states.color == 0) {
+        $("#font-color").val(initColor);
+        $(".font-color i").css("color", initColor);
+    }
+    else {
+        $("#font-color").val("");
+        $(".font-color i").css("color", "rgba(0,0,0,0.1)");
+    }
+
+    if (states.backgroundColor == 0) {
+        if (nodes[0].parentNode.id == "text-area" || $(nodes[0]).parent().css("background-color") == "rgba(0, 0, 0, 0)") {
+            $("#font-highlight").val("");
+            $("#font-highlight i").css("color", "rgba(0,0,0,0.1)");
+        }
+        else {
+            $("#font-highlight").val(initBackgroundColor);
+            $("#font-highlight i").css("color", initBackgroundColor);
+        }
+    }
+    else {
+        $("#font-highlight").val("");
+        $("#font-highlight i").css("color", "rgba(0,0,0,0.1)");
+    }
+
+    if (states.bold == 0) {
+        if (initBold == BOLD_ACTIVE) {
+            // SET
+            $("#bold").addClass("active");
+            $("#bold").attr("aria-pressed", "true");
+            $("#bold i").css("color", "rgb(33, 37, 41)");
+        } else if (initBold == BOLD_NORMAL) {
+            // UNSET
+            $("#bold").removeClass("active");
+            $("#bold").attr("aria-pressed", "false");
+            $("#bold i").css("color", "rgb(33, 37, 41)");
+        }
+        else {
+            // ERROR
+            $("#bold").removeClass("active");
+            $("#bold").attr("aria-pressed", "false");
+            $("#bold i").css("color", "rgba(0,0,0,0.1)");
+        }
+    }
+    else {
+        // MIXED
         $("#bold").removeClass("active");
         $("#bold").attr("aria-pressed", "false");
         $("#bold i").css("color", "rgba(0,0,0,0.1)");
-    } else {
-        // ERROR
     }
-}
 
-function checkSelectionItalic() {
-    const ITALIC = "italic";
-    const NORMAL = "normal";
-    var state = -1;
-
-    /* 
-  
-      STATE:
-  
-      -1 : ERRPR
-      0 : NORMAL
-      1 : ITALIC
-      2 : MIXED
-  
-      */
-
-    var nodes = getTextNodes();
-
-    for (var i = 0; i < nodes.length; i++) {
-        if (nodes[i]["nodeType"] == 3) {
-            //3 means text element
-            var fontStyle = $(nodes[i].parentNode).css("font-style");
-            if (fontStyle == ITALIC) {
-                if (state == 0) {
-                    state = 2;
-                    return state;
-                }
-                state = 1;
-            } else if (fontStyle == NORMAL) {
-                if (state == 1) {
-                    state = 2;
-                    return state;
-                }
-                state = 0;
-            } else {
-                console.error("font style not consistent");
-                state = -1;
-                return state;
-            }
+    if (states.italic == 0) {
+        if (initItalic == ITALIC_ACTIVE) {
+            // SET
+            $("#italic").addClass("active");
+            $("#italic").attr("aria-pressed", "true");
+            $("#italic i").css("color", "rgb(33, 37, 41)");
+        } else if (initItalic == ITALIC_NORMAL) {
+            // UNSET
+            $("#italic").removeClass("active");
+            $("#italic").attr("aria-pressed", "false");
+            $("#italic i").css("color", "rgb(33, 37, 41)");
+        }
+        else {
+            // ERROR
+            $("#italic").removeClass("active");
+            $("#italic").attr("aria-pressed", "false");
+            $("#italic i").css("color", "rgba(0,0,0,0.1)");
         }
     }
-
-    return state;
-}
-
-function setItalicState() {
-    var italicState = checkSelectionItalic();
-
-    if (italicState == 0) {
-        // UNSET BUTTON
-        $("#italic").removeClass("active");
-        $("#italic").attr("aria-pressed", "false");
-        $("#italic i").css("color", "rgb(33, 37, 41)");
-    } else if (italicState == 1) {
-        // SET BUTTON
-        $("#italic").addClass("active");
-        $("#italic").attr("aria-pressed", "true");
-        $("#italic i").css("color", "rgb(33, 37, 41)");
-    } else if (italicState == 2) {
-        // UNSET BUTTON
+    else {
+        // MIXED
         $("#italic").removeClass("active");
         $("#italic").attr("aria-pressed", "false");
         $("#italic i").css("color", "rgba(0,0,0,0.1)");
-    } else {
-        // ERROR
     }
+
+    if (states.underline == 0) {
+        if (initUnderline == UNDERLINE_ACTIVE) {
+            // SET
+            $("#underline").addClass("active");
+            $("#underline").attr("aria-pressed", "true");
+            $("#underline i").css("color", "rgb(33, 37, 41)");
+        } else if (initUnderline == UNDERLINE_NORMAL) {
+            // UNSET
+            $("#underline").removeClass("active");
+            $("#underline").attr("aria-pressed", "false");
+            $("#underline i").css("color", "rgb(33, 37, 41)");
+        }
+        else {
+            // ERROR
+            $("#underline").removeClass("active");
+            $("#underline").attr("aria-pressed", "false");
+            $("#underline i").css("color", "rgba(0,0,0,0.1)");
+        }
+    }
+    else {
+        // MIXED
+        $("#underline").removeClass("active");
+        $("#underline").attr("aria-pressed", "false");
+        $("#underline i").css("color", "rgba(0,0,0,0.1)");
+    }
+
+    if (states.alignment == 0) {
+        $(".text-alignment input:checked").parent().removeClass('active');
+        $(".text-alignment input:checked").attr("checked", false);
+        $(".text-alignment [value='" + initAlignment + "']").attr("checked", true);
+        $(".text-alignment input:checked").parent().addClass('active');
+    }
+    else {
+        // ERROR OR MIXED
+        $(".text-alignment input").parent().removeClass('active');
+    }
+
+    return states;
 }
+/* ---------- END CHECK FORMAT ---------- */
+
+
+// Make header position fixed at certain scrollpoint
+$('body').scroll(function () {
+    var scrollTop = $('body').scrollTop();
+    var targetScrollPoint = $("header").outerHeight();
+    if (scrollTop > targetScrollPoint) {
+        $("header").css("position", "fixed");
+    }
+    else {
+        $("header").css("position", "initial");
+    }
+});

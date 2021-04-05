@@ -88,7 +88,10 @@ $(document).ready(function () {
     $(document.body).mousemove(function (e) {
         if (isLeftRulerClicked) {
             showWidth();
-            notepad.setPositionLeft(e.pageX);
+            // Clip on the top before the toolbar and horizontal ruler
+            if (e.pageX > $(".ruler.vertical").outerWidth()) {
+                notepad.setPositionLeft(e.pageX);
+            }
         }
         else if (isRightRulerClicked) {
             showWidth();
@@ -96,7 +99,10 @@ $(document).ready(function () {
         }
         else if (isTopRulerClicked) {
             showHeight();
-            notepad.setPositionTop(e.pageY - $(".ruler.vertical").offset().top);
+            // Clip on the top before the toolbar and horizontal ruler
+            if (e.pageY > $("header").outerHeight() + $(".ruler.horizontal").outerHeight()) {
+                notepad.setPositionTop(e.pageY - $(".ruler.vertical").offset().top);
+            }
         }
         else if (isBottomRulerClicked) {
             showHeight();
