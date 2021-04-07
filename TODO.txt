@@ -1,0 +1,2 @@
+Bugs:
+- The highlight color setting does not change according to what the user select in the text area. This is due to the fact that it cannot find the css property 'background-color' on its parents because it is on its grandparents. Not sure how to fix this easily.
