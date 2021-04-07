@@ -353,7 +353,7 @@ function checkSelectionFormat() {
     var initFontFamily = $(nodes[0].parentNode).css("font-family");
     states.fontFamily = 0;
 
-    var initFontSize = $(nodes[0].parentNode).attr('size');
+    var initFontSize = $(nodes[0].parentNode).css("font-size");
     states.fontSize = 0;
 
     var initColor = $(nodes[0].parentNode).css("color");
@@ -385,7 +385,7 @@ function checkSelectionFormat() {
             }
 
             // Check for font-size state
-            if ($(nodes[i].parentNode).attr('size') != initFontSize) {
+            if ($(nodes[i].parentNode).css("font-size") != initFontSize) {
                 states.fontSize = 1;
             }
 
@@ -432,6 +432,29 @@ function checkSelectionFormat() {
     }
 
     if (states.fontSize == 0) {
+        switch (initFontSize) {
+            case "10px":
+                initFontSize = 1;
+                break;
+            case "13px":
+                initFontSize = 2;
+                break;
+            case "16px":
+                initFontSize = 3;
+                break;
+            case "18px":
+                initFontSize = 4;
+                break;
+            case "24px":
+                initFontSize = 5;
+                break;
+            case "32px":
+                initFontSize = 6;
+                break;
+            case "48px":
+                initFontSize = 7;
+                break;
+        }
         $('#font-size').val(initFontSize);
     }
     else {
