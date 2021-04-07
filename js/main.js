@@ -348,14 +348,14 @@ function checkSelectionFormat() {
             $(nodes[0]).parent().css("background-color") == "rgba(0, 0, 0, 0)"
         ) {
             $("#font-highlight").val("");
-            $("#font-highlight i").css("color", "rgba(0,0,0,0.1)");
+            $(".fa-highlighter").css("color", "rgba(0,0,0,0.1)");
         } else {
             $("#font-highlight").val(initBackgroundColor);
-            $("#font-highlight i").css("color", initBackgroundColor);
+            $(".fa-highlighter").css("color", initBackgroundColor);
         }
     } else {
         $("#font-highlight").val("");
-        $("#font-highlight i").css("color", "rgba(0,0,0,0.1)");
+        $(".fa-highlighter").css("color", "rgba(0,0,0,0.1)");
     }
 
     if (states.bold == 0) {
