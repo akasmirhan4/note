@@ -70,7 +70,6 @@ body {
       -ms-user-select: none;
           user-select: none;
   height: 100vh;
-  overflow: scroll;
 }
 
 header {
@@ -78,6 +77,11 @@ header {
   background: white;
   z-index: 5;
   border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-light.focus, .btn-light.focus.active, .btn-light.focus.active:focus, .btn-light:focus {
+  -webkit-box-shadow: none !important;
+          box-shadow: none !important;
 }
 
 .filename {

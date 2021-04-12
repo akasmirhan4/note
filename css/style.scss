@@ -36,7 +36,6 @@ body {
   background: #fafafa;
   user-select: none;
   height: 100vh;
-  overflow: scroll;
 }
 header {
   width: 100vw;
@@ -44,6 +43,11 @@ header {
   z-index: 5;
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
+
+.btn-light.focus, .btn-light.focus.active, .btn-light.focus.active:focus, .btn-light:focus{
+  box-shadow: none !important;
+}
+
 .filename {
   outline: none;
   border: none;
